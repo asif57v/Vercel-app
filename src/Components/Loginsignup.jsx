@@ -91,7 +91,8 @@ const Loginsignup = () => {
   return (
     <div className='container'>
       <div className='header'>
-        <div className='text'>{action}</div>
+    <div>  
+       <div className='text'>Farmer's {action}</div></div> 
         <div className='underline'></div>
       </div>
 

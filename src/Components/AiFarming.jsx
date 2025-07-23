@@ -40,7 +40,7 @@ const AIFarming = () => {
       </header>
 
       <div className="ai-section">
-        <h2>🧠 Smart Crop & Fertilizer Suggestions</h2>
+        <h2 className='h22'>🧠 Smart Crop & Fertilizer Suggestions</h2>
 
         <label htmlFor="season">Select Season:</label>
         <select
