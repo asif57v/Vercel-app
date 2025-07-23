@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-// import './Farmer.css';
+import './Farmerpag.css';
 
 const Farmer = () => {
   const [cropData, setCropData] = useState({ name: '', quantity: '', price: '' });
@@ -78,6 +78,9 @@ const Farmer = () => {
   const styles = {
     container: {
       maxWidth: '100%',
+      Width:'100%',
+      minWidth:'100%',
+      // Width :'150vh',
       // top:'45px',
     position: 'relative',
       margin: 'auto',
@@ -161,12 +164,14 @@ const Farmer = () => {
       borderRadius: '6px',
       cursor: 'pointer',
     }
-  };
+  }
+
 
   return (
 
     
-    <div style={styles.container}>
+    <div className='COnt' style={styles.container}>
+
 
 
 <div style={{

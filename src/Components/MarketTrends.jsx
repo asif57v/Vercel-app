@@ -1,136 +1,135 @@
-import React, { useEffect, useState } from 'react';
-// import '/m.css'
-
-const prices = {
-  Punjab: [
-    { crop: "Wheat", price: "₹2200", updated: "July 3, 2025" },
-    { crop: "Rice", price: "₹1850", updated: "July 3, 2025" },
-    { crop: "Maize", price: "₹1700", updated: "July 3, 2025" }
-  ],
-  "Madhya Pradesh": [
-    { crop: "Soybean", price: "₹4400", updated: "July 3, 2025" },
-    { crop: "Wheat", price: "₹2100", updated: "July 3, 2025" },
-    { crop: "Rice", price: "₹2000", updated: "July 3, 2025" }
-  ],
-  Maharashtra: [
-    { crop: "Onion", price: "₹1500", updated: "July 3, 2025" },
-    { crop: "Tomato", price: "₹1800", updated: "July 3, 2025" },
-    { crop: "Cotton", price: "₹6200", updated: "July 3, 2025" }
-  ]
-};
+import React, { useState } from 'react';
 
 const MarketTrends = () => {
-  const [userState, setUserState] = useState('');
-  const [cropFilter, setCropFilter] = useState('');
-  const [locationMessage, setLocationMessage] = useState('Detecting your location...');
+  const [selectedCrop, setSelectedCrop] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState('');
 
-  useEffect(() => {
-    getLocation();
-  }, []);
+  const cropData = [
+    { crop: 'Wheat', location: 'Delhi', price: '₹2000/Quintal' },
+    { crop: 'Rice', location: 'Punjab', price: '₹1800/Quintal' },
+    { crop: 'Wheat', location: 'Punjab', price: '₹1950/Quintal' },
+    { crop: 'Rice', location: 'Delhi', price: '₹1750/Quintal' },
+    { crop: 'Maize', location: 'Bihar', price: '₹1500/Quintal' },
+  ];
 
-  const getLocation = async () => {
-    if (!navigator.geolocation) {
-      setLocationMessage("Geolocation not supported.");
+  const filteredData = cropData.filter(item => {
+    return (
+      (selectedCrop ? item.crop === selectedCrop : true) &&
+      (selectedLocation ? item.location === selectedLocation : true)
+    );
+  });
 
+  const uniqueCrops = [...new Set(cropData.map(item => item.crop))];
+  const uniqueLocations = [...new Set(cropData.map(item => item.location))];
 
-
-          return;
-    }
-
-    navigator.geolocation.getCurrentPosition(async (pos) => {
-      const lat = pos.coords.latitude;
-      const lon = pos.coords.longitude;
-
-      const apiKey = "693e85c838d54ad39cf600a82f76f9b8"; // Replace with your own key
-      const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lon}&key=${apiKey}`;
-
-      try {
-        const res = await fetch(url);
-        const data = await res.json();
-        const stateName = data.results[0].components.state;
-
-        setUserState(stateName);
-
-        if (prices[stateName]) {
-          setLocationMessage(`📍 Showing crop prices for: ${stateName}`);
-        } else {
-          setLocationMessage(`📍 State not supported: ${stateName}`);
-        }
-      } catch (error) {
-        setLocationMessage("Failed to fetch location.");
-      }
-    }, () => {
-      setLocationMessage("Location access denied.");
-    });
-  };
-
-  const getFilteredPrices = () => {
-    if (!userState || !prices[userState]) return [];
-
-    const allPrices = prices[userState];
-    return cropFilter
-      ? allPrices.filter(item => item.crop === cropFilter)
-      : allPrices;
-  };
-  const backgroundStyle = {
-    margin: '100px',
-    fontFamily: 'Arial, sans-serif',
-    backgroundImage: 'url("https://wallpaperaccess.com/full/1598226.jpg")',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat',
-    backgroundAttachment: 'fixed',
-    color: 'white',
-    minHeight: '100vh'
-  };
   return (
-    <div style={{ padding: '30px', fontFamily: 'Segoe UI, sans-serif' }}>
-      <h1>📊 Market Trends by Your Location</h1>
-      <p>{locationMessage}</p>
+    <div style={styles.container}>
+      <div style={styles.overlay}>
+        <h1 style={styles.heading}>Market Trends</h1>
+        <p style={styles.subheading}>Get the latest market price based on your crop and location</p>
 
-      <label htmlFor="cropSelect">Filter by Crop: </label>
-      <select
-        id="cropSelect"
-        value={cropFilter}
-        onChange={(e) => setCropFilter(e.target.value)}
-        style={{ padding: '6px', margin: '10px 0' }}
-      >
-        <option value="">--All Crops--</option>
-        <option value="Wheat">Wheat</option>
-        <option value="Rice">Rice</option>
-        <option value="Maize">Maize</option>
-        <option value="Onion">Onion</option>
-        <option value="Tomato">Tomato</option>
-        <option value="Cotton">Cotton</option>
-        <option value="Soybean">Soybean</option>
-      </select>
+        <div style={styles.selectWrapper}>
+          <select style={styles.select} onChange={(e) => setSelectedCrop(e.target.value)} value={selectedCrop}>
+            <option value="">All Crops</option>
+            {uniqueCrops.map(crop => (
+              <option key={crop} value={crop}>{crop}</option>
+            ))}
+          </select>
 
-      <div style={{ marginTop: '20px' }}>
-        {getFilteredPrices().length === 0 ? (
-          <p>No crop data found for selected filter or location.</p>
-        ) : (
-          <table border="1" cellPadding="10" style={{ borderCollapse: 'collapse', width: '100%' }}>
-            <thead style={{ backgroundColor: '#d0e0d5ff' }}>
-              <tr>
-                <th>Crop</th>
-                <th>Price</th>
-                <th>Last Updated</th>
+          <select style={styles.select} onChange={(e) => setSelectedLocation(e.target.value)} value={selectedLocation}>
+            <option value="">All Locations</option>
+            {uniqueLocations.map(location => (
+              <option key={location} value={location}>{location}</option>
+            ))}
+          </select>
+        </div>
+
+        <table style={styles.table}>
+          <thead>
+            <tr>
+              <th style={styles.th}>Crop</th>
+              <th style={styles.th}>Location</th>
+              <th style={styles.th}>Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredData.map((item, index) => (
+              <tr key={index}>
+                <td style={styles.td}>{item.crop}</td>
+                <td style={styles.td}>{item.location}</td>
+                <td style={styles.td}>{item.price}</td>
               </tr>
-            </thead>
-            <tbody>
-              {getFilteredPrices().map((item, index) => (
-                <tr key={index}>
-                  <td>{item.crop}</td>
-                  <td>{item.price}</td>
-                  <td>{item.updated}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
+};
+
+const styles = {
+  container: {
+    fontFamily: 'Segoe UI, sans-serif',
+    // backgroundImage: 'url("https://wallpaperaccess.com/full/1598226.jpg")',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundAttachment: 'fixed',
+    minHeight: '100vh',
+    padding: '30px',
+    color: 'white',
+    // margin-top:'675px'
+        // margin-top: 113px;
+        marginTop:'113px'
+  },
+  overlay: {
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    borderRadius: '10px',
+    padding: '20px',
+    maxWidth: '900px',
+    margin: 'auto',
+    width:"675px"
+  },
+  heading: {
+    fontSize: '2rem',
+    textAlign: 'center',
+    marginBottom: '10px',
+  },
+  subheading: {
+    textAlign: 'center',
+    marginBottom: '20px',
+  },
+  selectWrapper: {
+    display: 'flex',
+    gap: '10px',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
+    marginBottom: '20px',
+  },
+  select: {
+    padding: '8px',
+    borderRadius: '5px',
+    border: 'none',
+    minWidth: '150px',
+  },
+  table: {
+    width: '100%',
+    borderCollapse: 'collapse',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backdropFilter: 'blur(5px)',
+  },
+  th: {
+    padding: '12px',
+    backgroundColor: '#d0e0d5',
+    color: 'black',
+    textAlign: 'center',
+    fontWeight: '600',
+  },
+  td: {
+    padding: '10px',
+    border: '1px solid #ffffff33',
+    textAlign: 'center',
+    color: 'white',
+  },
 };
 
 export default MarketTrends;

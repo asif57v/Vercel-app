@@ -5,6 +5,16 @@
   min-height: 100vh;
 }
 
+@media (max-Width:811px){
+  .vendors-container {
+          padding: 40px 20px;
+        background-color: #f0f8ff;
+        min-height: 259vh;
+        font-size: 33px;
+        width: 124vh;
+}
+}
+
 h2 {
   text-align: center;
   margin-bottom: 30px;
@@ -42,4 +52,18 @@ h2 {
   margin: 5px 0;
   color: #555;
   font-size: 15px;
+}
+
+.add-to-cart-btn {
+  margin-top: 10px;
+  padding: 8px 16px;
+  background-color: #2e8b57;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.add-to-cart-btn:hover {
+  background-color: #246d47;
 }
